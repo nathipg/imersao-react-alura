@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import PageDefault from '../../../components/PageDefault/PageDefault';
@@ -35,6 +35,26 @@ function CadastroCategoria() {
       value,
     );
   };
+
+  useEffect(() => {
+    const URL = 'http://localhost:8080/categorias';
+    fetch(URL)
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        setCategorias([
+          ...response,
+        ]);
+      });
+    /*
+      Também poderia ser feito assim:
+      fetch(URL)
+        .then(async (response) => {
+          const responseJson = await response.json();
+        });
+    */
+  }, []);
 
   return (
     <PageDefault>
@@ -73,8 +93,14 @@ function CadastroCategoria() {
         </Button>
       </form>
 
+      {categorias.length === 0 && (
+        <div>
+          Carregando...
+        </div>
+      )}
+
       <ul>
-        {categorias.map((e, i) => <li key={e.nome + i}>{e.nome}</li>)}
+        {categorias.map((e) => <li key={e.nome}>{e.nome}</li>)}
       </ul>
 
       <Link to="/">
