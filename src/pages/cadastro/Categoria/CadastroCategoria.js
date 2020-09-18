@@ -1,39 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import useForm from '../../../hooks/useForm';
+
 import PageDefault from '../../../components/PageDefault/PageDefault';
 import FormField from '../../../components/FormField/FormField';
 import Button from '../../../components/Button';
 
 function CadastroCategoria() {
-  const [categorias, setCategorias] = useState([{
-    nome: 'Melhores do Bu',
-    descricao: 'O nome diz tudo',
-    cor: '#D31212',
-  }]);
+  const [categorias, setCategorias] = useState([]);
   const valoresIniciais = {
-    nome: '',
+    titulo: '',
     descricao: '',
     cor: '#000',
   };
-  const [categoria, setCategoria] = useState(valoresIniciais);
+  const { handlerFieldChange, values, clearForm } = useForm(valoresIniciais);
 
   const formCategoriaHandler = (e) => {
     e.preventDefault();
-    setCategorias([...categorias, categoria]);
-    setCategoria({ ...categoria, ...valoresIniciais });
-  };
-
-  const setPropCategoria = (prop, value) => {
-    setCategoria({ ...categoria, [prop]: value });
-  };
-
-  const handlerFieldChange = (e) => {
-    const { name, value } = e.target;
-    setPropCategoria(
-      name,
-      value,
-    );
+    setCategorias([...categorias, values]);
+    clearForm();
   };
 
   useEffect(() => {
@@ -42,9 +28,7 @@ function CadastroCategoria() {
       : 'https://imersao-react-alura-nathipg.herokuapp.com/categorias';
 
     fetch(URL)
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((response) => {
         setCategorias([
           ...response,
@@ -63,15 +47,15 @@ function CadastroCategoria() {
     <PageDefault>
       <h1>
         Cadastro de Categoria:
-        {categoria.nome}
+        {values.titulo}
       </h1>
 
-      <form style={{ backgroundColor: categoria.cor }} onSubmit={(e) => formCategoriaHandler(e)}>
+      <form style={{ backgroundColor: values.cor }} onSubmit={(e) => formCategoriaHandler(e)}>
 
         <FormField
-          label="Nome"
-          name="nome"
-          value={categoria.nome}
+          label="Título"
+          name="titulo"
+          value={values.titulo}
           onChange={handlerFieldChange}
         />
 
@@ -79,7 +63,7 @@ function CadastroCategoria() {
           as="textarea"
           label="Descrição"
           name="descricao"
-          value={categoria.descricao}
+          value={values.descricao}
           onChange={handlerFieldChange}
         />
 
@@ -87,7 +71,7 @@ function CadastroCategoria() {
           label="Cor"
           name="cor"
           type="color"
-          value={categoria.cor}
+          value={values.cor}
           onChange={handlerFieldChange}
         />
 
@@ -103,7 +87,7 @@ function CadastroCategoria() {
       )}
 
       <ul>
-        {categorias.map((e) => <li key={e.nome}>{e.nome}</li>)}
+        {categorias.map((e) => <li key={e.titulo}>{e.titulo}</li>)}
       </ul>
 
       <Link to="/">
